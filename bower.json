@@ -1,0 +1,22 @@
+{
+  "name": "mobile-app",
+  "version": "0.0.1",
+  "authors": [
+    "Sujith G <sujith3g@gmail.com>"
+  ],
+  "description": "A Mobile app using Meteor",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5"
+  }
+}
