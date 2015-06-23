@@ -10,3 +10,6 @@ accounts-password
 meteorhacks:npm
 http
 momentjs:moment
+
+
+npm-container
