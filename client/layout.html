@@ -22,30 +22,42 @@
         color: rgb(255, 255, 255);
         background-color: rgb(79, 125, 201);
     }
-     #core_toolbar1 {
+    
+    #core_toolbar_sidebar {
         color: rgb(255, 255, 255);
         background-color: rgb(79, 125, 201);
-      }
+    }
+    
     #section {
         box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
         background-color: rgb(250, 250, 250);
     }
+    
+    #section_content {
+        background: white;
+    }
     </style>
     <core-drawer-panel transition selected="main" id="core_drawer_panel" touch-action>
         <section id="section" drawer>
-            <core-toolbar id="core_toolbar1">
-                <div id="div1" flex>Product Name</div>
-            </core-toolbar>
-            <core-item id="core_item" icon="home" label="Home" horizontal center layout></core-item>
-            <core-item id="core_item1" icon="settings" label="Settings" horizontal center layout></core-item>
+            {{> side_menu}}
         </section>
         <core-header-panel mode="standard" id="core_header_panel" main>
             <core-toolbar id="core_toolbar">
                 <core-icon-button icon="arrow-back" id="core_icon_button"></core-icon-button>
                 <div id="div">Page Heading</div>
             </core-toolbar>
-            <section id="section1">
+            <section id="section_content">
+                {{> home}}
             </section>
         </core-header-panel>
     </core-drawer-panel>
 </body>
+
+ <!-- ======== side_menu ========= -->
+<template name="side_menu">
+    <core-toolbar id="core_toolbar_sidebar">
+        <div id="div1" flex>Product Name</div>
+    </core-toolbar>
+    <core-item id="core_item_home" icon="home" label="Home" horizontal center layout></core-item>
+    <core-item id="core_item_settings" icon="settings" label="Settings" horizontal center layout></core-item>
+</template>
