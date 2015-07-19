@@ -6,7 +6,7 @@ Template.sheet.rendered = function(){
     return item.col_title;
   });
   var col_widths = db_clex_columns.find({sheet_id:sheet_id}).fetch().map(function(item){
-    return item.col_title.length * 11;
+    return (item.col_title.length * 11) < 50 ? 50 : (item.col_title.length * 11);
   });
   var columns =  db_clex_columns.find({sheet_id:sheet_id}).fetch().map(function(item){
     return {data:item.col_name};

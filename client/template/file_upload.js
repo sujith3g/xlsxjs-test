@@ -74,7 +74,8 @@ SHEET.extractColumns = function(row) {
 Template.file_upload.events({
   'change #file_upload': function() {
     var file = $('#file_upload')[0].files[0];
-    var filename = file.name;
+    var filename = file ? file.name : "";
+    var header_row = parseInt($('#header_row').val(),0);
     var reader = new FileReader();
     reader.onload = function(event) {
       var data = event.target.result;
@@ -82,40 +83,43 @@ Template.file_upload.events({
         type: 'binary'
       });
       ///========== reads data from first sheet, consider first row as header row =========//
-      var cfg = {sheet_name:workbook.SheetNames[0],header:1,header_row:2};
+      var cfg;
+      if(header_row && (!isNaN(header_row))){
+        cfg = {sheet_name:workbook.SheetNames[0],header:1,header_row:2};
+      }else{
+        cfg = {sheet_name:workbook.SheetNames[0],header:1};
+      }
       var wb_data = to_array(workbook,cfg);
       // var first_sheet_data = wb_data[];
       var headers = wb_data[workbook.SheetNames[0]][0],columns = [],map = {};
-      headers.forEach(function(col) {
-        var obj = {};
-        obj.col_title = col;
-        obj.col_name = col.replace(/\s+/g, "_").replace(/[^A-Z0-9_]/ig, "").toLowerCase();
-        columns.push(obj);
-      });
-      // console.log();
-      var sheet_id = db_clex_sheets.insert({name:filename,time:Date.now()});
-      columns.forEach(function(column){
-        map[column.col_title] = column.col_name;
-        column.sheet_id = sheet_id;
-        db_clex_columns.insert(column);
-      });
-      // ===== replace headers with col_name in wb_data========//
-      wb_data[workbook.SheetNames[0]][0] = columns.map(function(col){
-        return col.col_name;
-      })
-      var sheet_data_json = arrays_to_objects(wb_data[workbook.SheetNames[0]]);
-      console.log(sheet_data_json);
-      sheet_data_json.forEach(function(row){
-        // var insert_row = {};
-        // console.log(row)
-        // for(column in row ){
-        //   insert_row[map[column]] = row[column];
-        // }
-        row.time = Date.now();
-        row.sheet_id = sheet_id;
-        // console.log(row);
-        db_clex_data.insert(row);
-      });
+      if(checkIfArrayIsUnique(headers)){
+        headers.forEach(function(col) {
+          var obj = {};
+          obj.col_title = col;
+          obj.col_name = col.replace(/\s+/g, "_").replace(/[^A-Z0-9_]/ig, "").toLowerCase();
+          columns.push(obj);
+        });
+        // console.log();
+        var sheet_id = db_clex_sheets.insert({name:filename,time:Date.now()});
+        columns.forEach(function(column){
+          map[column.col_title] = column.col_name;
+          column.sheet_id = sheet_id;
+          db_clex_columns.insert(column);
+        });
+        // ===== replace headers with col_name in wb_data========//
+        wb_data[workbook.SheetNames[0]][0] = columns.map(function(col){
+          return col.col_name;
+        })
+        var sheet_data_json = arrays_to_objects(wb_data[workbook.SheetNames[0]]);
+        console.log(sheet_data_json);
+        sheet_data_json.forEach(function(row){
+          row.time = Date.now();
+          row.sheet_id = sheet_id;
+          db_clex_data.insert(row);
+        });
+      }else{
+        console.log("Error: Duplicate column headers..");
+      }
     }
     if(file){
       reader.readAsBinaryString(file);
