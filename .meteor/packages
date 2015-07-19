@@ -13,3 +13,5 @@ momentjs:moment
 
 
 npm-container
+iron:router
+olragon:handsontable
