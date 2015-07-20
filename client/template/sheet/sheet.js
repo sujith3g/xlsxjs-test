@@ -2,15 +2,17 @@ Template.sheet.rendered = function(){
   var data = new Array();
   var my_table = $('#my_table');
   var sheet_id  = Session.get("sheet_id");
-  var col_titles = db_clex_columns.find({sheet_id:sheet_id}).fetch().map(function(item){
+  var col_titles = db_clex_columns.find({sheet_id:sheet_id},{sort:{index:1}}).fetch().map(function(item){
     return item.col_title;
   });
-  var col_widths = db_clex_columns.find({sheet_id:sheet_id}).fetch().map(function(item){
+  console.log(col_titles);
+  var col_widths = db_clex_columns.find({sheet_id:sheet_id},{sort:{index:1}}).fetch().map(function(item){
     return (item.col_title.length * 11) < 50 ? 50 : (item.col_title.length * 11);
   });
-  var columns =  db_clex_columns.find({sheet_id:sheet_id}).fetch().map(function(item){
+  var columns =  db_clex_columns.find({sheet_id:sheet_id},{sort:{index:1}}).fetch().map(function(item){
     return {data:item.col_name};
   });
+  console.log(columns);
   if(sheet_id){
     data = db_clex_data.find({sheet_id:sheet_id},{sort:{time:1}}).fetch();
     console.log(data);

@@ -15,11 +15,13 @@ function arrays_to_objects(data) {
     var result = [];
     var headers = data[0];
     for (var i = 1; i < data.length; i++) {
-      var row = {};
-      for (var j = 0; j < headers.length; j++) {
-        row[headers[j]] = data[i][j];
+      if(data[i].length > 0){
+        var row = {};
+        for (var j = 0; j < headers.length; j++) {
+          row[headers[j]] = data[i][j];
+        }
+        result.push(row);
       }
-      result.push(row);
     }
     return result;
   } else {
@@ -102,13 +104,15 @@ Template.file_upload.events({
       }
       var wb_data = to_array(workbook, cfg);
       // var first_sheet_data = wb_data[];
+      console.log(wb_data);
       var headers = wb_data[workbook.SheetNames[0]][0],
         columns = [],
         map = {};
-      if (checkIfArrayIsUnique(headers)) {
-        headers.forEach(function(col) {
+      // if (checkIfArrayIsUnique(headers)) {
+        headers.forEach(function(col,index) {
           var obj = {};
           obj.col_title = col;
+          obj.index = index;
           obj.col_name = col.replace(/\s+/g, "_").replace(/[^A-Z0-9_]/ig, "").toLowerCase().substr(0, 8);
           var i = 1;
           var new_col_name = obj.col_name;
@@ -130,8 +134,9 @@ Template.file_upload.events({
           db_clex_columns.insert(column);
         });
         // ===== replace headers with col_name in wb_data========//
-        wb_data[workbook.SheetNames[0]][0] = columns.map(function(col) {
-          return col.col_name;
+        wb_data[workbook.SheetNames[0]][0] = wb_data[workbook.SheetNames[0]][0].map(function(header,index) {
+          column = _.findWhere(columns, {index: index});
+          return column ? column.col_name : undefined;
         })
         var sheet_data_json = arrays_to_objects(wb_data[workbook.SheetNames[0]]);
         console.log(sheet_data_json);
@@ -140,9 +145,9 @@ Template.file_upload.events({
           row.sheet_id = sheet_id;
           db_clex_data.insert(row);
         });
-      } else {
-        console.log("Error: Duplicate column headers..");
-      }
+      // } else {
+        // console.log("Error: Duplicate column headers..");
+      // }
     }
     if (file) {
       reader.readAsBinaryString(file);
